@@ -1,0 +1,23 @@
+<html ng-app="Talkative">
+<head>
+    <title>Talkative!</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300,400italic' rel='stylesheet' type='text/css'>
+    <link type="text/css" rel="stylesheet" href="../site.css" />
+</head>
+<body>
+  <div class="panel">
+    <div class="title">Talkative!</div>
+    <div class="main-content-viewport">
+      <div class="userInputPanel" ng-controller="TalkativeInputController">
+        <input type="text" ng-model="iAmThis" />
+      </div>
+      <div class="userOutputPanel" ng-controller="TalkativeOutputController">
+        {{whatAmI}}
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+  <script type="text/javascript" src="talkative/talkative.js"></script>
+</body>
+</html>
