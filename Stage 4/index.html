@@ -8,8 +8,11 @@
   <div class="panel">
     <div class="title">Talkative!</div>
     <div class="main-content-viewport">
-      <div class="userInputPanel">
-        Input
+      <div class="userInputPanel" ng-controller="TalkativeInputController">
+        <div class="method-input-form">
+          <input type="text" ng-model="iAmThis" placeholder="What are ya?!"/>
+          <input type="button" class="button button-activate" value="Tell me what I am" ng-click="tellMeWhatIAm(iAmThis)"/>
+        </div>
       </div>
       <div class="userOutputPanel" ng-controller="TalkativeOutputController">
         I am a {{whatAmI}}

@@ -12,7 +12,9 @@ This stage has the basic layout for the app that we are going to be building whi
 This stage has nothing in it except this layout but it's worth taking a moment to look over the layout. There are a couple of things to note:
 
 1. On the panel itself I am using a media query to attempt to add the first steps towards being responsive and mobile ready. If you use the Chrome device emulator you will notice this still looks kind of nice on mobile devices and if you resize the screen it more or less always looks good. This is thanks to the media query and also the fact that I have used percentage sizing where appropriate.
+
 1. I have used a couple of new CSS3 properties which are becoming more widely supported across all browsers and require less vendor prefixes these days. Things like border-radius, box-shadow and most excitingly flex-box! All these properties are worth getting comfortable with now because it should only be a year or two before these have full adoption in browsers and if you don't know them then you'll be behind! You can use http://www.caniuse.com to find out the compatibility of these tags with different browsers.
+
 1. I've opted for a four colour scheme being a background color (#444), a secondary background color (#eee), a main color (#6bc997) and an accent color (#c96b9d). It's advisable that you don't use more colours than this if it can be avoided because it makes your site look too busy and harsh on the eye. Notice I haven't used any solid blacks or whites, these colours are harsh to the eye. Think of looking at snow that has a bright sun shining on it, not pleasant yeah? I chose these colours using a site called ColorPicker (http://www.colorpicker.com/) which you can input a colour into and it will suggest colours that go well with the one you want to use.
 
 #### How to get to Stage 2
@@ -36,11 +38,11 @@ This stage has nothing in it except this layout but it's worth taking a moment t
 
   ```
   angular.module("Talkative", []).controller('TalkativeOutputController', ['$scope', function($scope) {
-    $scope.whatAmI = "I am an Angular god!";
+    $scope.whatAmI = "Angular god!";
   }]);
   ```
 
-  So what this says is; create me a controller called TalkativeOutputController. We pass in the $scope variable and this is an angular thing that we can inject into our controller and we can attach properties and functions to it to allow us to use those properties within the scope of the element that we have attached our controller to. In this instance we have set a variable called whatAmI to the text "I am an Angular god!".
+  So what this says is; create me a controller called TalkativeOutputController. We pass in the $scope variable and this is an angular thing that we can inject into our controller and we can attach properties and functions to it to allow us to use those properties within the scope of the element that we have attached our controller to. In this instance we have set a variable called whatAmI to the text "I am an Angular god!". Note that the second argument is an array. This can actually either be an array or a function. If it is just a function then this is taken to the be the functionality for the controller. If it is an array then what is expected is any number of strings and the last element should be the function definition. The strings at the start the string representation of the variable names used in the arguments of the function. This is done to facilitate minification so that when the javascript you write is mangled the variable names can be parsed back to what they were before mangling. If you don't do this and then uglify your code then your angular app will break.
 
 - Finally we need to hook up angular to our HTML page. To do this we first need to hook up the app to our page. In this instance we will hook it up to the html. The validity of this will differ from app to app but you should know that the ng-app attribute will define the scope of the app as being the scope of the tag you put it on. i.e. you will only be able to use your app and it's artifacts within the scope of the DOM element that you put the ng-app on. Make your html tag like this:
 
@@ -52,7 +54,7 @@ This stage has nothing in it except this layout but it's worth taking a moment t
 
   ```
   <div class="userOutputPanel" ng-controller="TalkativeOutputController">
-    {{whatAmI}}
+    I am a {{whatAmI}}
   </div>
   ```
   So we have used the TalkativeOutputController controller within out ng-controller tag. We have then done what is called a value binding on the whatAmI variable which we put on the $scope argument passed into the controller. Next we will make you a little more modest.
@@ -60,4 +62,43 @@ This stage has nothing in it except this layout but it's worth taking a moment t
 ## Stage 2
 ### What's here
 
-In this stage we have a mind numbingly basic app. Basic it may be though it is, none the less, an angular app. Next we are going to add the ability to affect the values in the app.
+In this stage we have a mind numbingly basic app. Basic it may be though it is, none the less, an angular app. Next we're going to make our app do things that will make it look more like the sort of functionality that we want to provide. Let's make a results box.
+
+### What to do to get to Stage 3
+
+- Let's begin by fleshing out the html structure of what we want a result to look like. A result needs to display to the user the Id, the name value we've given to the task and the isComplete value. This is as the scheme that we defined in the last workshop. So to display this information we need something like this:
+
+  ```
+  <div class="result">
+    <div class="result-row">
+      <span class="result-header-column">Id </span>
+      <span class="result-value-column">guid</span>
+    </div>
+    <div class="result-row">
+      <span class="result-header-column">Name </span>
+      <span class="result-value-column">my name</span>
+    </div>
+    <div class="result-row">
+      <span class="result-header-column">isComplete </span>
+      <span class="result-value-column">
+        <i></i>
+      </span>
+    </div>
+  </div>
+  ```
+  Copy, paste or type in the html above over the top of what you previously had in the userOutputPanel. At this point if you refresh your app you should see a result box now appear showing the Id value of guid and the Name value of my name. This should display correctly because all stages of the solution join to a completed CSS file to avoid this becoming an all out CSS tutorial.
+
+- So far the values we see in the result are hard coded let make values for the result on our controller in the same way that we did previously. Go back to our controller and create yourself and create a variable on the $scope for each of id, name and isCompleted. Go ahead default the values for id and name to some arbitrary string values that will recognise when they load in the browser so you know if you've done things right.
+
+- Now we can head back to HTML. You will need to put value bindings into each of the span's marked with the result-value-column class using the double curly brace value binding notation we used earlier. You can do this for both the Id and the Name values. If you hit refresh on your page now you will find that the values you have put on the controller appear in your result.
+
+- One thing is not showing up at the moment however and that is the isComplete value. You will notice if you look at the markup that within the value column is just an icon tag and that's it! The reason for this is we are going to use the icon tag along with the ng-class binding and some font based icons to allow us to show the boolean value with either a tick or a cross. So first we need to get out font based icon set. We are going to use font awesome for this. Go to (http://www.fontawesome.io) and along the top click "Get Started". You'll see under the title "Easiest" a link to the font awesome CDN. Once again we are going to use a CDN for simplicity here but in Real Life TM we would probably pull this library down for use locally. Copy this link into the header of your index.html.
+
+- Now we are going to use the font awesome icons in an ng-class binding. The ng-class binding will return a class to be added to the elements class DOM property based on the result of a boolean expression. In this case we want to return a class value of "fa fa-check" if isComplete is true and "fa fa-times" (for the cross) if isComplete is false. We can do this by changing the icon tag like this:
+
+```
+<i ng-class="{'fa fa-check': isComplete, 'fa fa-times': !isComplete}"></i>
+```
+  Hit f5 on your browser and see what it looks like. Now change the isComplete value in your module and be sure to audibly gasp in amazement at your skill.
+
+- Finally you may have noticed that whilst you were hitting f5 every now and again you saw the curly brace syntax of the value bindings that you have made. This is due to the fact that we are putting our instance of angular at the bottom of the body. So the browser is loading angular last an as such it doesn't have a chance to parse the curly bracket syntax and replace it before the DOM displays these elements. To avoid this we can add the ng-cloak attribute to the value columns of the id and the name. There is some CSS in the site.css which will cause these elements to be set to display none so the user will not see the curly bracket syntax. Angular automatically removes the ng-cloak attribute when the values are bound and these elements will be displayed again.
