@@ -92,6 +92,8 @@ input[type="text"] {
   flex: 1;
   border-left: 2px solid #c96b9d;
   border-radius: 0 0  0.9375em  0;
+  overflow-y: auto;
+  margin: 0 8px;
 }
 
 .result {

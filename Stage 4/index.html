@@ -2,20 +2,35 @@
 <head>
     <title>Talkative!</title>
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300,400italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link type="text/css" rel="stylesheet" href="../site.css" />
 </head>
 <body>
   <div class="panel">
     <div class="title">Talkative!</div>
     <div class="main-content-viewport">
-      <div class="userInputPanel" ng-controller="TalkativeInputController">
+      <div class="userInputPanel">
         <div class="method-input-form">
-          <input type="text" ng-model="iAmThis" placeholder="What are ya?!"/>
-          <input type="button" class="button button-activate" value="Tell me what I am" ng-click="tellMeWhatIAm(iAmThis)"/>
+          Input
         </div>
       </div>
       <div class="userOutputPanel" ng-controller="TalkativeOutputController">
-        I am a {{whatAmI}}
+        <div class="result" ng-repeat="result in results">
+          <div class="result-row">
+            <span class="result-header-column">Id </span>
+            <span class="result-value-column" ng-cloak>{{result.id}}</span>
+          </div>
+          <div class="result-row">
+            <span class="result-header-column">Name </span>
+            <span class="result-value-column" ng-cloak>{{result.name}}</span>
+          </div>
+          <div class="result-row">
+            <span class="result-header-column">isComplete </span>
+            <span class="result-value-column">
+              <i ng-class="{'fa fa-check': result.isComplete, 'fa fa-times': !result.isComplete}"></i>
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -96,9 +96,39 @@ In this stage we have a mind numbingly basic app. Basic it may be though it is, 
 
 - Now we are going to use the font awesome icons in an ng-class binding. The ng-class binding will return a class to be added to the elements class DOM property based on the result of a boolean expression. In this case we want to return a class value of "fa fa-check" if isComplete is true and "fa fa-times" (for the cross) if isComplete is false. We can do this by changing the icon tag like this:
 
-```
-<i ng-class="{'fa fa-check': isComplete, 'fa fa-times': !isComplete}"></i>
-```
+  ```
+  <i ng-class="{'fa fa-check': isComplete, 'fa fa-times': !isComplete}"></i>
+  ```
   Hit f5 on your browser and see what it looks like. Now change the isComplete value in your module and be sure to audibly gasp in amazement at your skill.
 
 - Finally you may have noticed that whilst you were hitting f5 every now and again you saw the curly brace syntax of the value bindings that you have made. This is due to the fact that we are putting our instance of angular at the bottom of the body. So the browser is loading angular last an as such it doesn't have a chance to parse the curly bracket syntax and replace it before the DOM displays these elements. To avoid this we can add the ng-cloak attribute to the value columns of the id and the name. There is some CSS in the site.css which will cause these elements to be set to display none so the user will not see the curly bracket syntax. Angular automatically removes the ng-cloak attribute when the values are bound and these elements will be displayed again.
+
+## Stage 3
+### What's here
+
+Now we have an app that displays data a lot more like what we would want our real app to display. However at the moment it only displays one result and it would be much nicer if we could display more results than just one. Let's go about making our app display multiple results.
+
+### What to do to get to Stage 5
+
+- First let's change the module. So you can go ahead and remove the current scope variables from the controller. Once you have done this you can add a new scope variable and call it results. Results should be an array and for now just put one object in it. This object should have an id, name and isComplete variable on it just like your previous scope variables. It will look like this:
+
+  ```
+  $scope.results = [
+    {
+      id: "a really long guid",
+      name: "name of my task",
+      isComplete: true
+    }
+  ];
+```
+- Now we can attack our HTML again. This time we will be using the ng-repeat binding. This basically foreach loops over an array that you pass it from the scope and builds a copy of the template which it takes from the element scope that you define the ng-repeat on. If that's not clear keep reading and hopefully it will make sense as we go. First on the div marked with the result class add the ng-repeat binding like this:
+
+  ```
+  <div class="result" ng-repeat="result in results">
+  ```
+
+  So this is that foreach syntax I was talking about. This says make a copy of this div and it's contents then bind that html you've created to this item in the results array. Angular then rinse and repeats for every item in the array.
+
+- Another change we have to make to the html is that we are no longer binding to the variables we on the scope instead we are binding to the variables that are on the item that angular is binding the template to. In this instance we have defined this item as being called result (you can see this in the ng-repeat binding). So for each of id, name and isComplete we must prepend each with a "result." so that we are binding to the properties of result rather than the properties of the scope.
+
+- If you hit f5 now, hopefully. You will see no change what-so-ever. If you've actually followed along then this is a good thing! It means we are now successfully binding to the array. Now go back and copy paste your object, creating more object in the results array. Do this about 10 times so you have lots of results. Save, then go back and hit f5 and now you can see what a list of results should look like. Feel free to change a few of the values in the list if you'd like and you should see each of the results change individually.
