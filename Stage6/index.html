@@ -8,29 +8,14 @@
 <body>
   <div class="panel">
     <div class="title">Talkative!</div>
-    <div class="main-content-viewport">
-      <div class="user-input-panel">
+    <div class="main-content-viewport" ng-controller="TalkativeMainController">
+      <div class="user-input-panel" ng-controller="TalkativeInputController">
         <div class="method-input-form">
-          Input
+          <input type="button" class="button-activate" ng-click="getAll()" value="Get me everything!" />
         </div>
       </div>
       <div class="user-output-panel" ng-controller="TalkativeOutputController">
-        <div class="result">
-          <div class="result-row">
-            <span class="result-header-column">Id </span>
-            <span class="result-value-column" ng-cloak>{{id}}</span>
-          </div>
-          <div class="result-row">
-            <span class="result-header-column">Name </span>
-            <span class="result-value-column" ng-cloak>{{name}}</span>
-          </div>
-          <div class="result-row">
-            <span class="result-header-column">isComplete </span>
-            <span class="result-value-column">
-              <i ng-class="{'fa fa-check': isComplete, 'fa fa-times': !isComplete}"></i>
-            </span>
-          </div>
-        </div>
+        <tktv-results-list results="results"></tktv-results-list>
       </div>
     </div>
   </div>

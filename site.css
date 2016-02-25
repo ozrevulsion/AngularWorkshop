@@ -16,7 +16,7 @@ input[type="text"] {
   margin: 0.25em;
 }
 
-.button {
+input[type="button"] {
   margin: 0.25em;
   outline: none;
   border-radius: 0.25em;
@@ -25,7 +25,7 @@ input[type="text"] {
   width: 10em;
 }
 
-.button.button-activate {
+input[type="button"].button-activate {
   background-color: #6bc997;
   border-color: #c96b9d;
   color: #6b6ec9;
@@ -78,7 +78,7 @@ input[type="text"] {
 
 /* input panel modules */
 
-.userInputPanel {
+.user-input-panel {
   flex: 1;
   border-radius: 0 0  0 0.9375em;
 }
@@ -88,7 +88,7 @@ input[type="text"] {
 }
 
 /* input panel modules */
-.userOutputPanel {
+.user-output-panel {
   flex: 1;
   border-left: 2px solid #c96b9d;
   border-radius: 0 0  0.9375em  0;

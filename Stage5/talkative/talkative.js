@@ -1,4 +1,4 @@
-angular.module("Talkative", [])
+angular.module('Talkative', [])
 .controller('TalkativeOutputController', ['$scope', function($scope) {
   $scope.results = [
     {

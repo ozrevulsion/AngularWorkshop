@@ -158,7 +158,7 @@ We now have a page with an output panel that is displaying a list of results to 
 
 ### What to do to get to Stage 5
 
-- Grab the entire contents of the div that has the ng-repeat on it. That is the inner contents not the the element with the ng-repeat itself. Cut this code and create yourself a new folder called templates and within there create a file called tktv-result.html. This is where our result template will live. The tktv is our namespace (**T**al**K**a**T**i**V**e) this is simply a covention and is not required by angular.
+- Grab the entire contents of the div that has the ng-repeat on it. That is the inner contents not the the element with the ng-repeat itself. Cut this code and create yourself a new folder called templates and within there create a file called tktv-result.html. This is where our result template will live. The tktv is our namespace, (t)-al-(k)-a-(t)-i-(v)-e, this is simply a covention and is not required by angular.
 
 - Once we have this saved down we can go back to our html and in the middle of our ng-repeat we can add the following tag:
 
@@ -196,3 +196,68 @@ We now have a page with an output panel that is displaying a list of results to 
   Finally we have a scope property. By default directives use the scope of their parents so when you are access properties you are accessing them from the parent scope. By setting the scope property we tell the directive to create what's called an isolate scope. This basically means that we make the directive use it's own scope and any properties we give to the scope object that we set the scope property to will be come things that we can pass values into that will become variables on the scope of the directive. So here we have created a scope variable on our directive called result. The value of "=" tells angular that we want this scope variable to be two bound. The other values we could use here is @ which would just pass in a string and finally the & which allows us to trigger the evaluation of an expression in the context of the parent scope so when something happens on the directive we can have the directive call a function, for example, on the parent scope.
 
   Now that we've typed this in and understood what it does we're ready to hit f5 and watch the magic. Well, when I say magic, there should be no discernible change so if nothing happened then you're doing great!
+
+- Now that we have and individual result as an individual component why don't we take it one step further. Let's make the result list a directive as well. In this way, in theory, we could make one of these lists display a list of results from any query if the results were provided in an array of objects like they are here. To do this we follow similar steps as before. Copy the element with the ng-repeat on it with the tktv-result directive html inside into a seperate file called tktv-results-list.html. The files should look like this:
+
+  ```
+  <div class="result" ng-repeat="result in results">
+    <tktv-result result="result"></tktv-result>
+  </div>
+  ```
+  So you can see from this entry what we are going to need to supply to the directive, yeah? We are going to need to make sure the scope has a results variable on it and that the templateUrl is set to the tktv-results-list.html. To do this add the following directive to the end of our application execution chain:
+
+  ```
+  angular.module("Talkative", [])
+  .controller('TalkativeOutputController', ['$scope', function($scope) {
+    ...
+  )
+  .directive('tktvResult', function() {
+    ...
+  })
+  .directive('tktvResultsList', function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'talkative/templates/tktv-results-list.html',
+      scope: {
+        results: "="
+      }
+    };
+  });
+  ```
+  Once again take note of the properties we've set here. If you follow the previous explanation it should now be fairly clear what we are trying to acheive here. Hit f5 and, again, if you've done things right there should be no difference.
+
+## Stage 5
+### What we have
+
+We are now, from a user experience perspective, in exactly the same position as we were at the end of Stage 4. The user will still just see a list of results that we've hard coded into the controller. But from a development and architecture point of view we are in a much better position because we've created the components we're using as resusable pieces of code that we can use to construct a much richer website. Our next step will be to setup this controller to receive the data from outside sources rather than generating the data within the output controller.
+
+### What to do to get to Stage 6
+
+- First lets setup the framework to allow this in the html. We need to have something to interact with in the input panel of our app. The first operation that we are going to build is the one that calls the get all functionality we've implemented in our back end. So let's give ourselves a button to call this functionality. Go ahead and replace the word input in the div with the class method-input-form with this code:
+
+  ```
+  <input type="button" class="button-activate" ng-click="getAll()" value="Get me everything!" />
+  ```
+  This will activate the getAll function on scope when the Get me everything button is clicked. Next on the the div that has the class user-input-panel add a link to a controller that we'll name TalkativeInputController. Remember that's the ng-controller attribute we're looking to add. Finally, we need to add a link to a controller we'll call TalkativeMainController to the div with the class main-content-viewport, using previous examples you should know how to do this now.
+
+  So what does the changes we've just made to the html amount to? This aludes the architecture we're going to work towards with this app. There is going to an input controller which defines the different was we are going to derive things to send to the main controller who is going to be the broker of information between the input controller and the output controller whose job it is to display the results that are passed to it.
+
+- Now we're ready to build the functionality behind this html. Head over to your javascript and the first thing we're going to build is the input controller. To do this add a call to the controller function into out call to angular.module. You can really do this anywhere but I've chosen to do this before the call to controller for the output controller like this:
+
+  ```
+  angular.module("Talkative", [])
+  .controller('TalkativeInputController', ['$scope', function($scope) {
+
+  }])
+  .controller('TalkativeOutputController', ['$scope', function($scope) {
+    ...
+  )
+  .directive('tktvResult', function() {
+    ...
+  })
+  .directive('tktvResultsList', function() {
+    ...
+  });
+  ```
+
+  Now copy the contents
