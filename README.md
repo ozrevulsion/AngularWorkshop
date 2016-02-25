@@ -247,7 +247,11 @@ We are now, from a user experience perspective, in exactly the same position as 
   ```
   angular.module("Talkative", [])
   .controller('TalkativeInputController', ['$scope', function($scope) {
+    $scope.getAll = function() {
+      $scope.updateResults(
 
+      );
+    }
   }])
   .controller('TalkativeOutputController', ['$scope', function($scope) {
     ...
@@ -260,4 +264,28 @@ We are now, from a user experience perspective, in exactly the same position as 
   });
   ```
 
-  Now copy the contents
+  This will define our click handler and so this code will be fired when we hit the "Get me everything" button. Now we need to copy the array that we were using to set the value of results on the scope of the input controller into the parentheses for the execution call for updateResults. You may have noticed that at this point we have no definition for the updateResults function. Well done, read on because I explain this next.
+
+- Now we need to define the TalkativeMainController. You can do that by adding by adding the following controller definition before the TalkativeInputController in the call chain. Once again we are adding it at the start for no reason other than I like the look of doing it that way, it would work no matter what order you call it in.
+
+  ```
+  angular.module('Talkative', [])
+  .controller('TalkativeMainController', ['$scope', function($scope) {
+    $scope.results = [];
+    $scope.updateResults = function(newResults) {
+      $scope.results = newResults;
+    };
+  }])
+  .controller('TalkativeOutputController', ['$scope', function($scope) {
+  }])
+  .controller('TalkativeInputController', ['$scope', function($scope) {
+    ...
+  }])
+  .directive('tktvResult', function() {
+    ...
+  })
+  .directive('tktvResultsList', function() {
+    ...
+  });
+  ```
+  Now you can see where the updateResults function has been defined. If you now go to your app and hit f5 you will notice that at first the output area is blank, but, if you hit "Get me everything" then the results you had before will be displayed. This is working because child controllers inherit the scope of their parents. So when we hit the button it calls the updateResults function on the MainController from the input controller. The main controller then updates the results array which is defined on the main controllers scope and inherited into the output controllers scope and because our directive bind themselves to a results property on scope the update is taken across into our directives.
