@@ -4,6 +4,24 @@
 ## What's in here?
 In this repository you will find the code for the workshop that I will be running on the 26th of Feb, 2016. You will notice that there are number of folders marked as Stages. In each stage folder you will find the code in a state of completion that I will make a note of during the workshop. If at any stage you get lost or something doesn't work, Don't Panic! Just get listen to the rest of what I'm saying and wait for me to tell you when we are at the next stage and you can pick up from there.
 
+## Before we begin
+
+This workshop makes the assumption that you have node setup and the http-server module installed. You should be serving the root of this repository as a website using this. This is because later on when we get to directives angular is going to start complaining if you are trying to run the website using a file:// protocol.
+
+To install node you can google the many tutorials on how to do this but for now I'll assume you do have it.
+
+If you don't have it already you will need to install the http-server module globally on your command line using this command:
+
+```
+npm i http-server -g
+```
+Once this is completed you can go ahead and navigate in your command line to the root of this repository and use the command:
+
+```
+http-server . -p 3000
+```
+This will serve the root of the repository on http://localhost:3000. If you need to server the website on a different port run the command with a difference -p value with the port number of your choice. If you have done things correctly when you surf to http://localhost:3000/Stage1 you should see the the app in it's beginning stage.
+
 ## Stage 1
 
 #### What's here
@@ -108,7 +126,7 @@ In this stage we have a mind numbingly basic app. Basic it may be though it is, 
 
 Now we have an app that displays data a lot more like what we would want our real app to display. However at the moment it only displays one result and it would be much nicer if we could display more results than just one. Let's go about making our app display multiple results.
 
-### What to do to get to Stage 5
+### What to do to get to Stage 4
 
 - First let's change the module. So you can go ahead and remove the current scope variables from the controller. Once you have done this you can add a new scope variable and call it results. Results should be an array and for now just put one object in it. This object should have an id, name and isComplete variable on it just like your previous scope variables. It will look like this:
 
@@ -132,3 +150,49 @@ Now we have an app that displays data a lot more like what we would want our rea
 - Another change we have to make to the html is that we are no longer binding to the variables we on the scope instead we are binding to the variables that are on the item that angular is binding the template to. In this instance we have defined this item as being called result (you can see this in the ng-repeat binding). So for each of id, name and isComplete we must prepend each with a "result." so that we are binding to the properties of result rather than the properties of the scope.
 
 - If you hit f5 now, hopefully. You will see no change what-so-ever. If you've actually followed along then this is a good thing! It means we are now successfully binding to the array. Now go back and copy paste your object, creating more object in the results array. Do this about 10 times so you have lots of results. Save, then go back and hit f5 and now you can see what a list of results should look like. Feel free to change a few of the values in the list if you'd like and you should see each of the results change individually.
+
+## Stage 4
+### What's here
+
+We now have a page with an output panel that is displaying a list of results to us. This is, more or less, the functionality we require from this app. There is an opportunity here for us to make a component that we could use to display a list of results that conform to this pattern anywhere we want on our website. What we have created within our ng-repeat is a standardised way for us to display a result conforming to the structure that we are getting from our object schema defined in previous workshops. Here we are displaying a list of them but what if we wanted to display just one somewhere else on the site. In this specific example it's unlikely that this will be the case but you don't have to think hard about the structure of most websites before you realise that there are benefits from being able to display the same widget looking the same way where ever you want with a minimal amount of code. We can do this directives and that is what we'll be looking at next.
+
+### What to do to get to Stage 5
+
+- Grab the entire contents of the div that has the ng-repeat on it. That is the inner contents not the the element with the ng-repeat itself. Cut this code and create yourself a new folder called templates and within there create a file called tktv-result.html. This is where our result template will live. The tktv is our namespace (**T**al**K**a**T**i**V**e) this is simply a covention and is not required by angular.
+
+- Once we have this saved down we can go back to our html and in the middle of our ng-repeat we can add the following tag:
+
+  ```
+  <div class="result" ng-repeat="result in results">
+    <tktv-result result="result"></tktv-result>
+  </div>
+  ```
+
+  But tktv-result is a made up tag so how does Angular know to replace this with what we have in tktv-result.html? With a directive.
+
+- Let's move into the javascript again and add the following directive function at the end of our module definition:
+
+  ```
+  angular.module("Talkative", [])
+  .controller('TalkativeOutputController', ['$scope', function($scope) {
+    ...
+  )
+  .directive('tktvResult', function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'talkative/templates/tktv-result.html',
+      scope: {
+        result: "="
+      }
+    };
+  });
+  ```
+  Let's read this code. The first argument we are passing to the directive function is a string called tktvResult. This is translated by Angular so it knows that when it sees 'tktvResult' that it needs to search for tktv-result tags. It does it like this because obviously a minus is a reserved character in javascript so to be able to reference the directive javascript it needs to be camel case and equal capitals in tags is not valid XHTML so we need to avoid using camel case when we are creating the html tags that refer to the directive.
+
+  The next parameter is a function. This function returns an object. Let's inspect it's properties. The first property is restrict and it's value is E. This says that we are wanting to create a directive that can only be used as an element directive. The value for this property can be A - Attribute, E - element, C - class, M - comment. Equally you can mix these like using AE would create a directive that can be used as either an element or attribute directive.
+
+  The next property is the templateUrl which should be fairly obvious what this does. In this case we have give the path relative to the html file that our angular module is running on and it leads to our template html file.
+
+  Finally we have a scope property. By default directives use the scope of their parents so when you are access properties you are accessing them from the parent scope. By setting the scope property we tell the directive to create what's called an isolate scope. This basically means that we make the directive use it's own scope and any properties we give to the scope object that we set the scope property to will be come things that we can pass values into that will become variables on the scope of the directive. So here we have created a scope variable on our directive called result. The value of "=" tells angular that we want this scope variable to be two bound. The other values we could use here is @ which would just pass in a string and finally the & which allows us to trigger the evaluation of an expression in the context of the parent scope so when something happens on the directive we can have the directive call a function, for example, on the parent scope.
+
+  Now that we've typed this in and understood what it does we're ready to hit f5 and watch the magic. Well, when I say magic, there should be no discernible change so if nothing happened then you're doing great!
