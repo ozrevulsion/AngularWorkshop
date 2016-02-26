@@ -1,0 +1,26 @@
+<html ng-app="Talkative">
+<head>
+    <title>Talkative!</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300,400italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link type="text/css" rel="stylesheet" href="../site.css" />
+</head>
+<body>
+  <div class="panel">
+    <div class="title">Talkative!</div>
+    <div class="main-content-viewport" ng-controller="TalkativeMainController">
+      <div class="user-input-panel" ng-controller="TalkativeInputController">
+        <div class="method-input-form">
+          <input type="button" class="button-activate" ng-click="getAll()" value="Get me everything!" />
+        </div>
+      </div>
+      <div class="user-output-panel" ng-controller="TalkativeOutputController">
+        <tktv-results-list results="results"></tktv-results-list>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+  <script type="text/javascript" src="talkative/talkative.js"></script>
+</body>
+</html>

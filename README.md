@@ -289,3 +289,46 @@ We are now, from a user experience perspective, in exactly the same position as 
   });
   ```
   Now you can see where the updateResults function has been defined. If you now go to your app and hit f5 you will notice that at first the output area is blank, but, if you hit "Get me everything" then the results you had before will be displayed. This is working because child controllers inherit the scope of their parents. So when we hit the button it calls the updateResults function on the MainController from the input controller. The main controller then updates the results array which is defined on the main controllers scope and inherited into the output controllers scope and because our directive bind themselves to a results property on scope the update is taken across into our directives.
+
+## Stage 6
+### What we have
+
+Now what we have is looking far more like the functionality that we'd expect this simple UI to be providing to us. We have a button that will send results to our output controller (through an intermediary) and the results will then be displayed on screen. What we are going to do next is another qualitive change. As it stands the Input Controller and Output Controller are pretty tightly coupled to the scope of the Main Controller and in the next stage we are going to take steps to rectify this. We will decouple the modules, and in doing so, create far more resusuable and much more testable modules. To achieve this what we will try to do is move the reliance on the parent scope of the children and, in a way, the reliance of the parent on it's children we will introduce a messaging system between modules. So each module can responsible for it's own private properties and allow other modules to curate their own.
+
+### What we have to do to get to Stage 7
+
+- First let's make the input controller emit an event that tells.....who ever is listening that they have new data to provide to them. We can do this by replacin the call to to $scope.updateResults with a call to $scope.$emit('arbitraryeventname') like this:
+
+  ```
+  .controller('TalkativeInputController', ['$scope', function($scope) {
+    $scope.getAll = function() {
+      $scope.$emit('newResultsAvailable', [...]);
+    };
+  }])
+  ```
+  In the case above the ellisis is the value of the hardcoded array we've been using thus far. Now when the getAll function is called by the ng-click an event will be emitted called 'newResultsAvailable' with a data packet of the results that we've returned.
+
+- Next we need to set up the MainController to listen to this event. To do this we have change the body of the main controller to something like this:
+
+  ```
+  .controller('TalkativeMainController', ['$scope', function($scope) {
+    $scope.$on('newResultsAvailable', function(e, newResults) {
+      $scope.$broadcast('resultsReadyToDisplay', newResults);
+    });
+  }])
+  ```
+
+  You'll notice here that we've used the $on function which is used to listen for named events and execute its callback when they are received. In this case we take the data payload of the event and pump it straight into a $broadcast call which is what we use to send an event to the children of this controller. Once again this is a message in the true sense of the word; it is both asynchronous and unreliable. No result is listened for and we assume that the result we've gotten was received correctly. This is something that I've not programmed around for the sake of simplicity but may or may not be something that would have to be considered in a live system.
+
+- Finally we need to build in the listener on the output controller to do this we would modify the output controller like so:
+
+  ```
+  .controller('TalkativeOutputController', ['$scope', function($scope) {
+    $scope.results = [];
+    $scope.$on('resultsReadyToDisplay', function(e, resultsToDisplay) {
+      $scope.results = resultsToDisplay;
+    });
+  }])
+  ```
+
+  The first thing you'll notice here that we've defined the result back the child scope where this variable is applicable. We didn't have to do this but I feel it's a good practice to define a default on a variable you are going to use when defining a controller. The second part of the function should be pretty familiar at this stage. We're just defining a listener for the resultsToDisplay event and setting our results property on the our scope to the payload of the event.
