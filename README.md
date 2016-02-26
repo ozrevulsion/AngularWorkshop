@@ -346,7 +346,7 @@ It seems like a recurring theme at this point but what we have at this stage fro
   pipelines.AfterRequest.AddItemToEndOfPipeline((ctx) =>
   {
       ctx.Response.WithHeader("Access-Control-Allow-Origin", "*")
-                      .WithHeader("Access-Control-Allow-Methods", "POST,GET")
+                      .WithHeader("Access-Control-Allow-Methods", "POST,GET,DELETE")
                       .WithHeader("Access-Control-Allow-Headers", "Accept, Origin, Content-type");
 
   });
