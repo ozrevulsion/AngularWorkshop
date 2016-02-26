@@ -332,3 +332,38 @@ Now what we have is looking far more like the functionality that we'd expect thi
   ```
 
   The first thing you'll notice here that we've defined the result back the child scope where this variable is applicable. We didn't have to do this but I feel it's a good practice to define a default on a variable you are going to use when defining a controller. The second part of the function should be pretty familiar at this stage. We're just defining a listener for the resultsToDisplay event and setting our results property on the our scope to the payload of the event.
+
+## Stage 7
+### What we have
+
+It seems like a recurring theme at this point but what we have at this stage from a user's quantitative point of view is nothing different than it was to the last stage. What is different though is the fact that we now have components that are much more decoupled allowing for far greater reuse and testability. Sure, at this point the Main Controller serves no other purpose than brokering information from the input into the output but because the input and output now live in isolation we can use them anywhere we like in the system. The output module will obviously, only be able to show data that conforms to the schema that it is used to working with but as it stands the input module could, in theory, be used to retrieve whatever data we like and send it to whatever is listening to the newResultsAvailable event and this listening module would then be trust to route the data as it was needed. This is a boon for our ability to develop a richly featured front end. Next we are going to take steps to, finally, connect up our front end UI to some of the NancyFX routes that were defined in previous workshops.
+
+### What to do to get to Stage 8
+
+- First things first, none of this is going to work unless we add some headers into the NancyFX bootstrapper. I won't pretend to know how this code fits into the NancyFX framework but here is what I know about what the following code does. On the server side we need to add some headers to our responses that allow cross origin requests, known by the cool kids of the interwebz as enabling CORS. More or less what this is saying is that we should be allowed to make requests from and to the same server, which is what we are doing because our angular website is currently running on localhost:3000 (or whatever port you chose) and our web api back end is running on localhost:6969 (for me, a different port for you). Thus, when we make call from angular to nancy we are send and receiving from the same host. If you take a moment to think about why this might be disabled by default it completely makes sense but also completely destroy's our example which is why we are enabling CORS for this demo. Just know that in the real world TM we probably wouldn't have to do this. Without further ado, navigate to The My.TodoList.Api/Modules/Bootstrapper.cs file of your solution. Then just before the call to base.ApplicationStatrup add this code:
+
+  ```
+  pipelines.AfterRequest.AddItemToEndOfPipeline((ctx) =>
+  {
+      ctx.Response.WithHeader("Access-Control-Allow-Origin", "*")
+                      .WithHeader("Access-Control-Allow-Methods", "POST,GET")
+                      .WithHeader("Access-Control-Allow-Headers", "Accept, Origin, Content-type");
+
+  });
+  ```
+- Now we're ready to head back to the front end and this step is fairly simply. We just need to replace the body of the getAll function with the following code:
+
+  ```
+  $scope.getAll = function() {
+    $http({method: 'GET', url: 'http://localhost:6969/api/todo/items'})
+      .success(function(results) {
+        $scope.$emit('newResultsAvailable', results);
+      });
+  };
+  ```
+
+  We can see from this code that we start using the $http library. This is a built in library to angular and can/must be injected into the input controller in the same fashion as the scope was, don't forget to add a string of the $http variable before the function as well as adding it as an argument to the function.
+
+  This code calls the $http function which takes an object which is the configuration describing the type of http call we'd like to make. In this instance we've told $http to make a get request to localhost on the port of our NancyFX driven back end. This call to $http returns a javascript promise which we can then use the success callback to provide functionality for when we get a 200 error code. For your own reference there is also an error function we could define off this promise in the same way we have defined this success above, we won't be doing that now for the sake of saving time but it is something we would do if we were implementing this in production.
+
+  Within our success function we've placed the emit that we used to have except we've exchanged the hardcoded payload with the payload returned by the Get request.
