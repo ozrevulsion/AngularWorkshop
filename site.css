@@ -33,6 +33,14 @@ input[type="button"].button-activate {
 
 [ng\:cloak], [ng-cloak], .ng-cloak { display: none; }
 
+#toast-container {
+  background-color: #eee;
+}
+
+.toaster-error, .toast-message {
+  background-color: #bd362f;
+}
+
 /* layout */
 .panel {
   margin: 0;
@@ -85,7 +93,8 @@ input[type="button"].button-activate {
 }
 
 .method-input-form {
-  padding: 0.3125em;
+  padding: 0.3125em 1em 0.3125em 0.3125em;
+  flex: 1
 }
 
 .input-view-content {
@@ -147,6 +156,7 @@ input[type="button"].button-activate {
   border: solid #c96b9d;
   border-width: 0 2px 0 0;
   border-radius: 0 0 0 0.9375em;
+  background-color: #6b6ec9;
 }
 
 /* input panel modules */

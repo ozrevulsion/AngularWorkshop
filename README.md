@@ -71,7 +71,7 @@ This stage has nothing in it except this layout but it's worth taking a moment t
 - Next we need to add the controller to it's scope within our DOM. Change your the div marked with the class userOutputPanel to look like this:
 
   ```
-  <div class="userOutputPanel" ng-controller="TalkativeOutputController">
+  <div class="user-output-panel" ng-controller="TalkativeOutputController">
     I am a {{whatAmI}}
   </div>
   ```
@@ -452,9 +452,67 @@ Now our app is not only functioning correctly for this one call to get all but i
     <tktv-input-selector class="input-view-content"></tktv-input-selector>
   </div>
   <div ng-class="{'active-panel': isActiveView('get-all'), 'inactive-panel': !isActiveView('get-all'), 'input-view': true}">
-    <tktv-get-all></tktv-get-all>
+    <tktv-get-all class="input-view-content"></tktv-get-all>
   </div>
   ```
 
   We can see here that the first div is applying a back-button or back-button-hidden class to itself based on whether the selector is the active view or not. It also has a click event which sets the active view back to selector.
   The next two divs then set their classes to either active-panel or inactive-panel based on the result of isActiveView. They both also always get the input-view class to set the css that is applicable to all views. Note our new tktv-input-selector directive within the div.
+
+## Stage 10
+### What we have
+
+We now have an app that is looking closer to complete than ever. We've implemented a menu of options that the user can click to show the screen with the functionality they want to use and they can also navigate back to the menu. Granted, at this point, we only have one option to choose from but because we've built the UI in a modular way it should be fairly simple to implement new features. Now as we move forward from this point development should be fairly quick. You've now learned a number of things that angular can do so you may notice improvements already that can be made on this system like using directives and ng-repeats for menu items etc. These would be good things to do but I am not going to do them as part of this workshop because they are other things angular can do that we haven't covered yet that I'd prefer to present to you rather than going over the same concepts over and over. As I said, development should be fairly quick from here on in so let's introduce an option to allow the user to get just one item.
+
+### How to get to Stage 11
+
+- First create yourself a tktv-get-one template in the templates directory and put in it the following code:
+
+  ```
+  <div class="method-input-form">
+    <input type="text" placeholder="Which ID do you want?" ng-model="searchId"/>
+    <input type="button" class="button-activate" value="Go get it!" ng-click="getOne(searchId)"/>
+  </div>
+  ```
+
+  You can see we are using an text box to take and id an a button whose click event sends the searchId variable from scope into the getOne function which is also on scope. There is an attribute that we haven't come across as yet on the text box and that's the ng-model attribute. This attribute creates a two way binding between the variable you define in this attribute and the DOM element that we are binding to. What this means is that this text box is now bound to the searchId on scope, when we update the text in the text box it will in turn update the searchId variable on scope with what we are typing in. This means that when we clikc the button whatever is the text box is what is going to get sent to the getOne function. As a side note, this is a **two**-way binding, meaning that the text box updates the variable but equally if we were to operate on the variable in the javascript then this would update the text in the text box. So we could probably fairly easily implement a button that clears the text box if we wanted to. Maybe you might like to try that in your spare time.
+
+- With the template in place let's include what will be our new directive in the html. Go ahead and add the code below just under the div that holds the get all option:
+
+  ```
+  <div ng-class="{'active-panel': isActiveView('get-one'), 'inactive-panel': !isActiveView('get-one'), 'input-view': true}">
+    <tktv-get-one class="input-view-content"></tktv-get-one>
+  </div>
+  ```
+
+  This code should be fairly self explanatory at this point. One thing to do whilst we are editing the html is add a cdn for the toastr library (http://codeseven.github.io/toastr/). We need the css and javascript for toastr so put the css in the header with the rest of the css and put the javascript at the bottom of the body just above angular. toastr has a dependency on jQuery so we'll also need to grab the CDN for the latest v1 version of jquery (http://code.jquery.com/) and throw that above the toaster script tag. In this stage we are going to introduce some error handling and we're going to use toastr to provide us with the messages to display to the user.
+
+- The last step to get to Stage 11 is to create the directive for tktv-get-one in the javascript. Here is the code, we'll analyse it after:
+
+  ```
+  .directive('tktvGetOne', function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'talkative/templates/tktv-get-one.html',
+      controller: ['$scope', '$http', function($scope, $http) {
+        $scope.searchId = '';
+        $scope.getOne = function() {
+          $http({method: 'GET', url: 'http://localhost:6969/api/todo/items/' + $scope.searchId})
+            .success(function(results) {
+              $scope.$emit('newResultsAvailable', [results]);
+            })
+            .error(function (e) {
+              $scope.$emit('clearResults');
+              toastr.error('Either that wasn\'t a valid Id or the server is having a really bad day.');
+            });
+        };
+      }]
+    }
+  })
+  ```
+
+  As with the get-all directive definition pay attention to the port number the url we're using you may need to change it from 6969 to something else. SO let's look at this code. The controller is the part we're particularly interested in, the other two properties should be self explanatory at this point. So within the the controller we're defining a scope variable called searchId which you should recognise from our ng-model attribute. There is also the definition of the getOne function. Within this function you'll see a similar get statement to what we used for the get-all directive with one difference that we are concatenating the searchId scope variable to the end of the url. This is conform with what we need to send the Nancy back end for it to return the results we want. If it is successful then it will send the results payload to the newResultsAvailable event the same at the previous directive. Notice that in this code we are wrapping the payload returned from the get method in an array. This is because Nancy, for this call, returns us a single object, so if we were to just send the payload to the newResultsAvailable event then it would load the results scope variable with just the object and then when the ng-repeat in the output controller tries to iterate over the object it would actually iterate over the keys in the object thus returning three results, none of which would conform to the schema we need to show a result correctly!
+
+  Finally we provide an handler for if we get an error state from the server. If we get an error we emit a clear results event and then tell toaster to tell the user something went wrong. I think that because typing an incorrect id causes your Nancy project to throw an exception, correct response headers are not sent back to our angular client. This is probably the reason that our e parameter comes back null. If it didn't come back we could include the e.status property to also report to the user the error code that came back from the server.
+
+- Go ahead and give your new view a try. Go into the get-all view and copy an id from one of the results then go to the get one thing option and paste your id in and hit the "Go get it!" button and watch the magic. You might also like to try entering an invalid id and seeing what happens. First your NancyFX server with throw an exception but once you hit f5 in Visual studio through that you'll see the toastr error message pop up in the top right corner.
