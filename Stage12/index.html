@@ -1,0 +1,39 @@
+<html ng-app="Talkative">
+<head>
+    <title>Talkative!</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300,400italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <link type="text/css" rel="stylesheet" href="../site.css" />
+</head>
+<body>
+  <div class="panel">
+    <div class="title">Talkative!</div>
+    <div class="main-content-viewport" ng-controller="TalkativeMainController">
+      <div class="user-input-panels" ng-controller="TalkativeInputController">
+        <div ng-class="{'back-button-hidden': isActiveView('selector'), 'back-button': !isActiveView('selector')}" ng-click="setView('selector')">&lt; Back</div>
+        <div ng-class="{'active-panel': isActiveView('selector'), 'inactive-panel': !isActiveView('selector'), 'input-view': true}">
+          <tktv-input-selector class="input-view-content"></tktv-input-selector>
+        </div>
+        <div ng-class="{'active-panel': isActiveView('get-all'), 'inactive-panel': !isActiveView('get-all'), 'input-view': true}">
+          <tktv-get-all class="input-view-content"></tktv-get-all>
+        </div>
+        <div ng-class="{'active-panel': isActiveView('get-one'), 'inactive-panel': !isActiveView('get-one'), 'input-view': true}">
+          <tktv-get-one class="input-view-content"></tktv-get-one>
+        </div>
+        <div ng-class="{'active-panel': isActiveView('new-item'), 'inactive-panel': !isActiveView('new-item'), 'input-view': true}">
+          <tktv-new-item class="input-view-content"></tktv-new-item>
+        </div>
+      </div>
+      <div class="user-output-panel" ng-controller="TalkativeOutputController">
+        <tktv-results-list results="results"></tktv-results-list>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.12.1.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+  <script type="text/javascript" src="talkative/talkative.js"></script>
+</body>
+</html>

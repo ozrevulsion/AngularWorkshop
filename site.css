@@ -33,11 +33,11 @@ input[type="button"].button-activate {
 
 [ng\:cloak], [ng-cloak], .ng-cloak { display: none; }
 
-#toast-container {
-  background-color: #eee;
+#toast-container, .toast-message {
+  background-color: inherit;
 }
 
-.toaster-error, .toast-message {
+.toaster-error {
   background-color: #bd362f;
 }
 

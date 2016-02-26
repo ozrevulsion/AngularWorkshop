@@ -477,6 +477,15 @@ We now have an app that is looking closer to complete than ever. We've implement
 
   You can see we are using an text box to take and id an a button whose click event sends the searchId variable from scope into the getOne function which is also on scope. There is an attribute that we haven't come across as yet on the text box and that's the ng-model attribute. This attribute creates a two way binding between the variable you define in this attribute and the DOM element that we are binding to. What this means is that this text box is now bound to the searchId on scope, when we update the text in the text box it will in turn update the searchId variable on scope with what we are typing in. This means that when we clikc the button whatever is the text box is what is going to get sent to the getOne function. As a side note, this is a **two**-way binding, meaning that the text box updates the variable but equally if we were to operate on the variable in the javascript then this would update the text in the text box. So we could probably fairly easily implement a button that clears the text box if we wanted to. Maybe you might like to try that in your spare time.
 
+- Next we need to add the option to our input selector template. Go ahead and put this code in below the option for Get me everything:
+
+  ```
+  <div class="input-option" ng-click="setView('get-one')">
+    <div class="input-option-text">Get me one thing</div>
+    <div class="caret-right"></div>
+  </div>
+  ```
+  
 - With the template in place let's include what will be our new directive in the html. Go ahead and add the code below just under the div that holds the get all option:
 
   ```
