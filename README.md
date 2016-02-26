@@ -367,3 +367,30 @@ It seems like a recurring theme at this point but what we have at this stage fro
   This code calls the $http function which takes an object which is the configuration describing the type of http call we'd like to make. In this instance we've told $http to make a get request to localhost on the port of our NancyFX driven back end. This call to $http returns a javascript promise which we can then use the success callback to provide functionality for when we get a 200 error code. For your own reference there is also an error function we could define off this promise in the same way we have defined this success above, we won't be doing that now for the sake of saving time but it is something we would do if we were implementing this in production.
 
   Within our success function we've placed the emit that we used to have except we've exchanged the hardcoded payload with the payload returned by the Get request.
+
+## Stage 8
+### What have now
+
+We now have an application that interacts with it's back end to retreive result and serve these result to the appropriate front end module to display the results to the user. The next section should be fairly familiar although with a few minor additions. Here we will be turning the get all input functionality into a module. This will serve little purpose other than to modularise this search method. This won't appear to add value to the app immediately but once we start introducing new functions to the app it will soon become apparent why I have opted for this modular approach to input methods.
+
+### What to do to get to Stage 9
+
+- So creative the template and linking this into the html is not different to previous times we've done this in this workshop. I don't think there is a need to explain this further than to say copy the button into a template called tktv-get-all.html and create a directive on module definition using code like this:
+
+  ```
+  .directive('tktvGetAll', function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'talkative/templates/tktv-get-all.html',
+      controller: ['$scope', '$http', function($scope, $http) {
+        $scope.getAll = function() {
+          $http({method: 'GET', url: 'http://localhost:6969/api/todo/items'})
+            .success(function(results) {
+              $scope.$emit('newResultsAvailable', results);
+            });
+        };
+      }]
+    }
+  });
+  ```
+  So basically we've just copied the entire body of the input controller into a property called controller on the directive that we've defined. This makes this directive entirely self contained, functionality and all. We could probably take this a step further at this point and find a way to padd down the url to the component so that we don't have it hardcoded in this directive but this is one step too far for the workshop but would definitely be something we would consider in a production app.
