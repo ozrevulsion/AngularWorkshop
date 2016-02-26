@@ -369,9 +369,9 @@ It seems like a recurring theme at this point but what we have at this stage fro
   Within our success function we've placed the emit that we used to have except we've exchanged the hardcoded payload with the payload returned by the Get request.
 
 ## Stage 8
-### What have now
+### What we have
 
-We now have an application that interacts with it's back end to retreive result and serve these result to the appropriate front end module to display the results to the user. The next section should be fairly familiar although with a few minor additions. Here we will be turning the get all input functionality into a module. This will serve little purpose other than to modularise this search method. This won't appear to add value to the app immediately but once we start introducing new functions to the app it will soon become apparent why I have opted for this modular approach to input methods.
+We now have an application that interacts with it's back end to retrieve result and serve these result to the appropriate front end module to display the results to the user. The next section should be fairly familiar although with a few minor additions. Here we will be turning the get all input functionality into a module. This will serve little purpose other than to modularise this search method. This won't appear to add value to the app immediately but once we start introducing new functions to the app it will soon become apparent why I have opted for this modular approach to input methods.
 
 ### What to do to get to Stage 9
 
@@ -393,4 +393,68 @@ We now have an application that interacts with it's back end to retreive result 
     }
   });
   ```
-  So basically we've just copied the entire body of the input controller into a property called controller on the directive that we've defined. This makes this directive entirely self contained, functionality and all. We could probably take this a step further at this point and find a way to padd down the url to the component so that we don't have it hardcoded in this directive but this is one step too far for the workshop but would definitely be something we would consider in a production app.
+  So basically we've just copied the entire body of the input controller into a property called controller on the directive that we've defined. In previous examples our directives have been little more that shells that we can fill with values we want them to display. This is the first instance we've seen of a directive that has it's own built in functionality! This makes this directive entirely self contained, functionality and all. We could probably take this a step further at this point and find a way to padd down the url to the component so that we don't have it hardcoded in this directive but this is one step too far for the workshop but would definitely be something we would consider in a production app.
+
+## Stage 9
+### What we have
+
+Now our app is not only functioning correctly for this one call to get all but it is modularised in a way that will promote reuse and testability. Granted we haven't written tests nor have we going the whole way with the modularisation but hopefully you have grasped enough of the contents to seek this information out yourself. Next we are going to start paving the way to allow the user to make other calls to the API that they would like.
+
+### What to do get to Stage 10
+
+- I'm going to be a bit more brief in these first few steps because I feel you should have grasped the concepts needed to to these fairly easily. Create yourself a new template for a directive we'll call tktv-input-selector. The code for this should be as follows:
+
+  ```
+  <div class="input-selector">
+    <div class="input-option" ng-click="setView('get-all')">
+      <div class="input-option-text">Get me everything</div>
+      <div class="caret-right"></div>
+    </div>
+  </div>
+  ```
+
+  You should be able to see here that all we are doing is laying the ground work to create a list of options that the user can choose from to perform the different calls to our API that they would like. Note the ng-click attribute which is calling a function on the scope (or as you'll see in a moment, on the parent's scope) and passes in a string to identify this option.
+
+- Next let's make the appropriate changes for this stage in the javascript. First let's add a directive for tktv-input-selector. This needs to be restricted to being an element directive and should connect the template we created earlier. Nothing else is needed here. You should be able to work out from looking at previous code how to do this.
+
+- Now we need to add some code into the input controller. Take a look at this code and see if you can work out it's intent. Afterwards I'll provide analysis of the code:
+
+  ```
+  .controller('TalkativeInputController', ['$scope', '$http', function($scope, $http) {
+    $scope.activeView = 'selector';
+    $scope.isActiveView = function(viewName) {
+      return viewName === $scope.activeView;
+    };
+    $scope.setView = function(viewName) {
+      $scope.activeView = viewName;
+      $scope.$emit('clearResults');
+    }
+  }])
+  ```
+
+  So you can see here that on the input controller we are creating a variable called activeView on the local scope and intiailising it to the string "selector". We're also providing a function called isActiveView which is returns true if the activeView variable matches the viewName passed in to the function. Finally we're declaring a function called setView on the local scope that sets the activeView to the viewName passed and then emits a clearResults event. This is all fairly straight forward except that we haven't yet defined the clearResults event. Let's do that next.
+
+- To handle the clearResults event put this code in the bottom of your main controller:
+
+  ```
+  $scope.$on('clearResults', function() {
+    $scope.$broadcast('resultsReadyToDisplay', []);
+  });
+  ```
+
+  So let's take a moment to look all this code together. First we have an option in a directive and when it get's clicked on it calls set view with the string 'get-all'. This setView is actually defined on the input controller which should suggest to where this directive is going to live. When set view is called it will set the activeView name to 'get-all' and clear the results in the output panel by emitting a clearResults event which will in turn broadcast a resultsReadyToDisplay event whose payload is an empty array. You should also note now that the isActiveView function will now return true under different conditions, where as it was returning true if we passed in the string "selector" it not returns true if we pass in "get-all"
+
+- Let's now hook up everything we need in the html. Once again, if you take a moment to look at this code you should be able to discern it's purpose. In any case I will analyse the code after you've read it as well. The code below should replace everything within the div with the ng-controller attribute of TalkativeInputController:
+
+  ```
+  <div ng-class="{'back-button-hidden': isActiveView('selector'), 'back-button': !isActiveView('selector')}" ng-click="setView('selector')">&lt; Back</div>
+  <div ng-class="{'active-panel': isActiveView('selector'), 'inactive-panel': !isActiveView('selector'), 'input-view': true}">
+    <tktv-input-selector class="input-view-content"></tktv-input-selector>
+  </div>
+  <div ng-class="{'active-panel': isActiveView('get-all'), 'inactive-panel': !isActiveView('get-all'), 'input-view': true}">
+    <tktv-get-all></tktv-get-all>
+  </div>
+  ```
+
+  We can see here that the first div is applying a back-button or back-button-hidden class to itself based on whether the selector is the active view or not. It also has a click event which sets the active view back to selector.
+  The next two divs then set their classes to either active-panel or inactive-panel based on the result of isActiveView. They both also always get the input-view class to set the css that is applicable to all views. Note our new tktv-input-selector directive within the div.

@@ -9,9 +9,11 @@
   <div class="panel">
     <div class="title">Talkative!</div>
     <div class="main-content-viewport" ng-controller="TalkativeMainController">
-      <div class="user-input-panel" ng-controller="TalkativeInputController">
-        <div class="method-input-form">
-          <input type="button" class="button-activate" ng-click="getAll()" value="Get me everything!" />
+      <div class="user-input-panels" ng-controller="TalkativeInputController">
+        <div class="input-view">
+          <div class="method-input-form">
+            <input type="button" class="button-activate" ng-click="getAll()" value="Get me everything!" />
+          </div>
         </div>
       </div>
       <div class="user-output-panel" ng-controller="TalkativeOutputController">

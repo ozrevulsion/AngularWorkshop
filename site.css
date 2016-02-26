@@ -78,13 +78,75 @@ input[type="button"].button-activate {
 
 /* input panel modules */
 
-.user-input-panel {
+.user-input-panels {
   flex: 1;
   border-radius: 0 0  0 0.9375em;
+  display: flex;
 }
 
 .method-input-form {
   padding: 0.3125em;
+}
+
+.input-view-content {
+  display: flex;
+  flex: 1;
+  border-radius: 0 0 0 0.9375em;
+}
+
+.input-view {
+  flex: 1;
+}
+
+.inactive-panel {
+  display: none;
+}
+
+.active-panel {
+  display: flex;
+  border-radius: 0 0 0 0.9375em;
+}
+
+.input-selector {
+  flex: 1;
+  border-radius: 0 0 0 0.9375em;
+}
+
+.input-option {
+  height: 3em;
+  border-bottom: 1px solid #c96b9d;
+  display: flex;
+  cursor: pointer;
+}
+
+.input-option-text {
+  margin: 0.75em 0 0 0.5em;
+  font-weight: 700;
+  color: #6b6ec9;
+  flex: 1;
+}
+
+.caret-right {
+  width: 0;
+  height: 0;
+  border: 5px solid;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: #6b6ec9;
+  margin-top: 1.1em;
+}
+
+.back-button-hidden {
+  display: none;
+}
+
+.back-button {
+  display: flex;
+  padding: 9em 0.25em 0 0.25em;
+  border: solid #c96b9d;
+  border-width: 0 2px 0 0;
+  border-radius: 0 0 0 0.9375em;
 }
 
 /* input panel modules */
@@ -93,7 +155,7 @@ input[type="button"].button-activate {
   border-left: 2px solid #c96b9d;
   border-radius: 0 0  0.9375em  0;
   overflow-y: auto;
-  margin: 0 0.5em;
+  margin: 0 0.5em 0 0;
 }
 
 .result {
@@ -108,7 +170,7 @@ input[type="button"].button-activate {
 }
 
 .result-header-column {
-    width: 90px;
+    width: 5.625em;
     text-align: right;
     font-weight: 700;
     border-right: 1px solid #c96b9d;

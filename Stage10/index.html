@@ -8,9 +8,15 @@
 <body>
   <div class="panel">
     <div class="title">Talkative!</div>
-    <div class="main-content-viewport">
-      <div class="user-input-panels">
-        Input
+    <div class="main-content-viewport" ng-controller="TalkativeMainController">
+      <div class="user-input-panels" ng-controller="TalkativeInputController">
+        <div ng-class="{'back-button-hidden': isActiveView('selector'), 'back-button': !isActiveView('selector')}" ng-click="setView('selector')">&lt; Back</div>
+        <div ng-class="{'active-panel': isActiveView('selector'), 'inactive-panel': !isActiveView('selector'), 'input-view': true}">
+          <tktv-input-selector class="input-view-content"></tktv-input-selector>
+        </div>
+        <div ng-class="{'active-panel': isActiveView('get-all'), 'inactive-panel': !isActiveView('get-all'), 'input-view': true}">
+          <tktv-get-all></tktv-get-all>
+        </div>
       </div>
       <div class="user-output-panel" ng-controller="TalkativeOutputController">
         <tktv-results-list results="results"></tktv-results-list>
